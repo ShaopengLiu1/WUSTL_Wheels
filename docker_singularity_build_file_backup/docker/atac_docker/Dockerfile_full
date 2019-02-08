@@ -1,0 +1,12 @@
+#Docker file full
+
+FROM zhanglab/atac-seq:base
+
+RUN	 conda install -c conda-forge jq \
+	&& curl -fsSL http://brc.wustl.edu/SPACE/shaopengliu/Docker_image/atac-seq/Resource.tar.gz -o /atac_seq/Resource.tar.gz \
+	&& tar -xvzf /atac_seq/Resource.tar.gz -C /atac_seq/ \
+	&& rm /atac_seq/Resource.tar.gz \
+	&& mkdir /data \
+	&& mkdir /scratch
+
+WORKDIR /data/

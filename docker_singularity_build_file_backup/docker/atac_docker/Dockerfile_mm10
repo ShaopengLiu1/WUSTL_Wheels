@@ -1,0 +1,14 @@
+#Docker file mm10
+
+FROM zhanglab/atac-seq:base
+
+RUN	conda install -c conda-forge jq \
+	&& curl -fsSL http://brc.wustl.edu/SPACE/shaopengliu/Docker_image/atac-seq/Resource_mm10.tar.gz -o /atac_seq/Resource_mm10.tar.gz \
+	&& tar -xvzf /atac_seq/Resource_mm10.tar.gz -C /atac_seq/ \
+	&& rm /atac_seq/Resource_mm10.tar.gz \
+	&& mkdir /data \
+	&& mkdir /scratch
+
+WORKDIR /data/
+
+

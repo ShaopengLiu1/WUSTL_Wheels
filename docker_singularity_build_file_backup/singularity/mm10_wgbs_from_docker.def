@@ -1,0 +1,41 @@
+Bootstrap: docker
+From: zhanglab/wgbs:base
+IncludeCmd: yes
+
+# for mm10 WGBS (Bo)
+# usage: add -B ./:/process
+
+%runscript
+cd /process \
+	&& bash /wgbs/pipeline/wgbs_TaRGET.sh $@
+
+%post
+apt-get update && apt-get install -y locales
+locale-gen en_US.UTF-8
+
+apt-get install debconf
+dpkg-reconfigure locales
+
+mkdir /process
+mkdir /scratch
+mkdir /wgbs
+mkdir /wgbs/test_file
+
+curl -o /wgbs/test_file/mm10_head4M_1.fq.gz http://brc.wustl.edu/SPACE/shaopengliu/Docker_image/wgbs/mm10_head4M_1.fq.gz
+curl -o /wgbs/test_file/mm10_head4M_2.fq.gz http://brc.wustl.edu/SPACE/shaopengliu/Docker_image/wgbs/mm10_head4M_2.fq.gz
+
+curl -o /wgbs/pipeline.tar.gz http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/wgbs/pipeline.tar.gz
+cd /wgbs  
+tar -xzf pipeline.tar.gz 
+rm pipeline.tar.gz
+
+curl -o /wgbs/resource.tar.gz http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/wgbs/resource.tar.gz 
+tar -xzf resource.tar.gz 
+rm resource.tar.gz
+
+
+%environment
+export PATH=$PATH:/opt/sratoolkit.2.9.1-1-ubuntu64/bin:/opt/bwa-0.7.16a/:/opt/methylQA/:/opt/kentUtils/bin/:/opt/miniconda/bin/
+
+
+

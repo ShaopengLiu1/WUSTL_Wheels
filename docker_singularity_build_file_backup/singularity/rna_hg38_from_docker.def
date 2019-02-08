@@ -1,0 +1,36 @@
+Bootstrap: docker
+From: zhanglab/rna-seq:base
+IncludeCmd: yes
+
+%runscript
+cd /process \
+        && bash /rna_seq/pipe_code/rna_seq_target.sh  $@
+
+%post
+########################
+apt-get update && apt-get install -y locales
+locale-gen en_US.UTF-8
+
+apt-get install debconf
+dpkg-reconfigure locales
+#####################
+mkdir /process
+
+# download pipe
+curl -fsSL  http://brc.wustl.edu/SPACE/shaopengliu/Docker_image/rna-seq/rna_seq.tar.gz -o /rna-seq.tar.gz \
+    && cd / && tar -xvzf rna-seq.tar.gz \
+    && rm rna-seq.tar.gz
+
+# download resources
+curl -o /rna_seq/hg38.tar.gz  http://brc.wustl.edu/SPACE/shaopengliu/Docker_image/rna-seq/hg38.tar.gz \
+    && cd /rna_seq \
+    && tar -xzf  hg38.tar.gz \
+    && mkdir resources \
+    && mv hg38 ./resources \
+    && rm hg38.tar.gz
+
+
+
+%environment
+export PATH=$PATH:/opt/miniconda/bin/:/opt/sratoolkit.2.9.1-1-ubuntu64/bin:/opt/bedtools2/bin/:/opt/methylQA/
+
